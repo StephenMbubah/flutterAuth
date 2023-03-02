@@ -1,5 +1,8 @@
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:untitled1/provider/auth_provider.dart';
+import 'package:untitled1/screens/home_screen.dart';
 import 'package:untitled1/screens/register_screen.dart';
 import 'package:untitled1/widgets/custom_button.dart';
 
@@ -13,6 +16,7 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
+    final ap =Provider.of<AuthProvider>(context, listen: false);
     return  Scaffold(
       body: SafeArea(
         top: true,
@@ -31,8 +35,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: CustomButton(
-                      onPressed: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>RegisterScreen()));
+                      onPressed: ()async{
+                        if(ap.isSignedIn==true){
+                          await ap.getDataFromSP().whenComplete(() => Navigator.pushReplacement(
+                              context, MaterialPageRoute(builder: (context)=> RegisterScreen())));
+                          print('signed in');
+                        }else{
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
+                          print("not signed in");
+                        }
                       },
                       text:("Get Started")
                     ),
